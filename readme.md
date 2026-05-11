@@ -54,8 +54,6 @@ There is a settings gui for the config you can edit in the garage.
 You can also change the display settings (text size, color, position) using the config file found in `mods/configs/pademinune`.
 To revert back to default settings, just delete the config file and when you restart the game, the default file will be created again.
 
-\*It does not work with HE shells yet as they have different mechanics.
-
 ## Installation
 
 1. Download `unzip-me.zip` from the [latest release](https://github.com/pademinune/Armor-Penetration-Calculator/releases).
