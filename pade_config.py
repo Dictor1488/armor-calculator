@@ -20,6 +20,12 @@ DEFAULT_CONFIG = {
         "red_chance": "FF2717",
         "ricochet": "800080",
     },
+    "shadow": {
+        "shadow_color": "000000",
+        "shadow_alpha": 8,
+        "shadow_length": 3,
+        "shadow_strength": 7,
+    },
 }
 
 CONFIG_FOLDER = os.path.join("mods", "configs", "pademinune")
@@ -38,6 +44,23 @@ def read_config():
     with open(CONFIG_PATH) as file:
         user_config = json.load(file)
 
+    return user_config
+
+
+def migrate_config(user_config):
+    changed = False
+    for section, defaults in DEFAULT_CONFIG.items():
+        if section not in user_config:
+            user_config[section] = defaults
+            changed = True
+        else:
+            for key, value in defaults.items():
+                if key not in user_config[section]:
+                    user_config[section][key] = value
+                    changed = True
+    if changed:
+        with open(CONFIG_PATH, "w") as f:
+            json.dump(user_config, f, indent=4)
     return user_config
 
 
@@ -61,6 +84,12 @@ def save_flat_config(settings):
             "red_chance": settings["color_red"],
             "ricochet": settings["color_ricochet"],
         },
+        "shadow": {
+            "shadow_color": settings["shadow_color"],
+            "shadow_alpha": settings["shadow_alpha"],
+            "shadow_length": settings["shadow_length"],
+            "shadow_strength": settings["shadow_strength"],
+        },
     }
 
     with open(CONFIG_PATH, "w") as f:
@@ -71,7 +100,7 @@ if not os.path.isfile(CONFIG_PATH):
     create_config()
 
 try:
-    user_settings = read_config()
+    user_settings = migrate_config(read_config())
 except:
     # if the config is invalid, reset it
     create_config()

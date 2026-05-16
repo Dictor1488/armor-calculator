@@ -3,7 +3,7 @@ import game  # type: ignore
 import Keys  # type: ignore
 from gui.modsSettingsApi import g_modsSettingsApi, templates  # type: ignore
 
-from pade_constants import ArmorLabel, PenLabel, Colors
+from pade_constants import ArmorLabel, PenLabel, Colors, Shadow
 from pade_config import save_flat_config
 from pade_gui import update_label_properties
 
@@ -116,6 +116,44 @@ template = {
             Colors.PURPLE,
             tooltip="{HEADER}Ricochet Color{/HEADER}{BODY}Color shown when the shell will ricochet.{/BODY}",
         ),
+        templates.createEmpty(10),
+        templates.createLabel("<b>— Shadow —</b>"),
+        templates.createColorChoice(
+            "Shadow Color",
+            "shadow_color",
+            Shadow.COLOR,
+            tooltip="{HEADER}Shadow Color{/HEADER}{BODY}The color of the text shadow/glow.{/BODY}",
+        ),
+        templates.createSlider(
+            "Shadow Opacity",
+            "shadow_alpha",
+            Shadow.ALPHA,
+            0,
+            10,
+            1,
+            format="{{value}}",
+            tooltip="{HEADER}Shadow Opacity{/HEADER}{BODY}The opacity of the text shadow. 0 = transparent, 10 = fully opaque.{/BODY}",
+        ),
+        templates.createSlider(
+            "Shadow Length",
+            "shadow_length",
+            Shadow.LENGTH,
+            0,
+            10,
+            1,
+            format="{{value}}",
+            tooltip="{HEADER}Shadow Length{/HEADER}{BODY}The blur radius of the text shadow.{/BODY}",
+        ),
+        templates.createSlider(
+            "Shadow Strength",
+            "shadow_strength",
+            Shadow.STRENGTH,
+            0,
+            10,
+            1,
+            format="{{value}}",
+            tooltip="{HEADER}Shadow Strength{/HEADER}{BODY}The sharpness of the text shadow. Higher = sharper outline.{/BODY}",
+        ),
     ],
 }
 
@@ -134,6 +172,10 @@ def on_settings_save(linkage, new_settings):
         Colors.ORANGE = new_settings["color_orange"]
         Colors.RED = new_settings["color_red"]
         Colors.PURPLE = new_settings["color_ricochet"]
+        Shadow.COLOR = new_settings["shadow_color"]
+        Shadow.ALPHA = new_settings["shadow_alpha"]
+        Shadow.LENGTH = new_settings["shadow_length"]
+        Shadow.STRENGTH = new_settings["shadow_strength"]
 
         save_flat_config(new_settings)
         update_label_properties()

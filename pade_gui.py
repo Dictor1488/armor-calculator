@@ -1,4 +1,4 @@
-from pade_constants import Colors, ArmorLabel, PenLabel
+from pade_constants import Colors, ArmorLabel, PenLabel, Shadow
 from gambiter import g_guiFlash  # type: ignore
 from gambiter.flash import COMPONENT_TYPE, COMPONENT_ALIGN  # type: ignore
 
@@ -86,17 +86,21 @@ def update_gui(armor_value, prob, ricochet, hit_body, hit_track):
 log("Starting creation of armor and penetration gui components")
 
 
+def _build_glowfilter():
+    return {
+        "color": int(Shadow.COLOR, 16),
+        "alpha": Shadow.ALPHA / 10.0,
+        "blurX": Shadow.LENGTH,
+        "blurY": Shadow.LENGTH,
+        "strength": Shadow.STRENGTH,
+        "quality": 2,
+    }
+
+
 armor_label_properties = {
     "isHtml": True,
     "text": "",
-    "glowfilter": {
-        "color": 0x000000,  # Black
-        "alpha": 1,  # Solid
-        "blurX": 3,  # Glow width
-        "blurY": 3,  # Glow height
-        "strength": 10,  # Higher = sharper outline
-        "quality": 2,
-    },
+    "glowfilter": _build_glowfilter(),
     "alignX": COMPONENT_ALIGN.CENTER,
     "alignY": COMPONENT_ALIGN.CENTER,
     "x": ArmorLabel.X_OFFSET,
@@ -107,14 +111,7 @@ armor_label_properties = {
 probability_label_properties = {
     "isHtml": True,
     "text": "",
-    "glowfilter": {
-        "color": 0x000000,  # Black
-        "alpha": 1,  # Solid
-        "blurX": 3,  # Glow width
-        "blurY": 3,  # Glow height
-        "strength": 10,  # Higher = sharper outline
-        "quality": 2,
-    },
+    "glowfilter": _build_glowfilter(),
     "alignX": COMPONENT_ALIGN.CENTER,
     "alignY": COMPONENT_ALIGN.CENTER,
     "x": PenLabel.X_OFFSET,
@@ -131,11 +128,13 @@ g_guiFlash.createComponent(
 
 
 def update_label_properties():
+    glowfilter = _build_glowfilter()
     g_guiFlash.updateComponent(
         ARMOR_ALIAS,
         {
             "x": ArmorLabel.X_OFFSET,
             "y": ArmorLabel.Y_OFFSET,
+            "glowfilter": glowfilter,
         },
     )
     g_guiFlash.updateComponent(
@@ -143,6 +142,7 @@ def update_label_properties():
         {
             "x": PenLabel.X_OFFSET,
             "y": PenLabel.Y_OFFSET,
+            "glowfilter": glowfilter,
         },
     )
 
