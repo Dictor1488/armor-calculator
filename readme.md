@@ -12,7 +12,7 @@ For questions or mod support join the [Discord server](https://discord.gg/Przqyn
 
 This mod is also on the offical [Wargaming mod portal](https://wgmods.net/7605/).
 
-This mod displays the exact effective armor value and penetration probability of a tank you are aiming at.
+This mod displays the exact effective armor value, penetration probability, and angle of a tank you are aiming at.
 
 > *How is this different from other effective armor mods found in modpacks?*
 
@@ -42,7 +42,7 @@ optimal spot to shoot that will maximize your chance of penning.
     - Spaced armor
     - HEAT shell dissipation through spaced armor
 - Computes and displays probability of penetration
-- Tells you if a shot will be a ricochet
+- Displays the exact armor angle so that you know when to change angles to pen someone
 - Great performance since the mod uses the calculatons already done
 by the game
 - Customize the mod to your liking by changing the settings
