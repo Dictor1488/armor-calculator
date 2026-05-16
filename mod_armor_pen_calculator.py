@@ -48,8 +48,6 @@ def call_update_gui(
     if not ricochet and hit_body:
         prob = get_gaussian_probability(avg_pen, armor_val)
 
-    # log("Angle is {}°".format(hit_angle))
-
     update_gui(armor_val, prob, ricochet, hit_body, hit_track, hit_angle)
 
 

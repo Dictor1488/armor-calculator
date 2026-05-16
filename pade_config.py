@@ -15,8 +15,8 @@ DEFAULT_CONFIG = {
         "label_format": "{prob}%",
     },
     "angle_label": {
-        "x_offset": 0,
-        "y_offset": 70,
+        "x_offset": 30,
+        "y_offset": 35,
         "font_size": 16,
         "label_format": "{angle}°",
     },
