@@ -73,7 +73,7 @@ template = {
             100,
             1,
             format="{{value}}px",
-            tooltip="{HEADER}Pen Label Font Size{/HEADER}{BODY}The size in pixels of the Penetration Label.{/BODY}",
+            tooltip="{HEADER}Probability Label Font Size{/HEADER}{BODY}The size in pixels of the Penetration Label.{/BODY}",
         ),
         templates.createNumericStepper(
             "Pen Label Horizontal Offset",
@@ -83,7 +83,7 @@ template = {
             2000,
             1,
             manual=True,
-            tooltip="{HEADER}Pen Label Horizontal Offset{/HEADER}{BODY}The penetration label's horizontal offset from the center of the screen. Positive values move it to the right.{/BODY}",
+            tooltip="{HEADER}Probability Label Horizontal Offset{/HEADER}{BODY}The probability label's horizontal offset from the center of the screen. Positive values move it to the right.{/BODY}",
         ),
         templates.createNumericStepper(
             "Pen Label Vertical Offset",
@@ -93,13 +93,13 @@ template = {
             2000,
             1,
             manual=True,
-            tooltip="{HEADER}Pen Label Vertical Offset{/HEADER}{BODY}The penetration label's vertical offset from the center of the screen. Positive values move it down.{/BODY}",
+            tooltip="{HEADER}Probability Label Vertical Offset{/HEADER}{BODY}The probability label's vertical offset from the center of the screen. Positive values move it down.{/BODY}",
         ),
         templates.createInput(
             "Pen Label Format",
             "pen_label_format",
             PenLabel.LABEL_FORMAT,
-            tooltip="{HEADER}Pen Label Format{/HEADER}{BODY}The display format of the penetration label. '{prob}' will be replaced with the penetration probability.{/BODY}",
+            tooltip="{HEADER}Probability Label Format{/HEADER}{BODY}The display format of the probability label. '{prob}' will be replaced with the penetration probability.{/BODY}",
         ),
         templates.createEmpty(10),
         templates.createLabel("<b>— Angle Label —</b>"),
