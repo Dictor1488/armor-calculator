@@ -24,6 +24,13 @@ DEFAULT_CONFIG = {
         "label_format": "{angle}°",
         "display_threshold": 65,
     },
+    "eff_pen_label": {
+        "enabled": False,
+        "x_offset": -30,
+        "y_offset": 35,
+        "font_size": 16,
+        "label_format": "{eff_pen}",
+    },
     "colors": {
         "green_chance": "B6FF00",
         "orange_chance": "FFAD00",
@@ -97,6 +104,13 @@ def save_flat_config(settings):
             "font_size": settings["angle_label_font_size"],
             "label_format": settings["angle_label_format"],
             "display_threshold": settings["angle_label_display_threshold"],
+        },
+        "eff_pen_label": {
+            "enabled": settings["eff_pen_label_enabled"],
+            "x_offset": settings["eff_pen_label_x_offset"],
+            "y_offset": settings["eff_pen_label_y_offset"],
+            "font_size": settings["eff_pen_label_font_size"],
+            "label_format": settings["eff_pen_label_format"],
         },
         "colors": {
             "green_chance": settings["color_green"],

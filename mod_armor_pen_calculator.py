@@ -46,7 +46,7 @@ def call_update_gui(avg_pen, armor_val, ricochet, hit_body, hit_track, hit_angle
     if not ricochet and hit_body:
         prob = get_gaussian_probability(avg_pen, armor_val)
 
-    update_gui(armor_val, prob, ricochet, hit_body, hit_track, hit_angle)
+    update_gui(armor_val, prob, ricochet, hit_body, hit_track, hit_angle, avg_pen)
 
 
 log("Mod is loading")

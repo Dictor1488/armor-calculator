@@ -1,9 +1,6 @@
-import BigWorld  # type: ignore
-import game  # type: ignore
-import Keys  # type: ignore
 from gui.modsSettingsApi import g_modsSettingsApi, templates  # type: ignore
 
-from pade_constants import ArmorLabel, PenLabel, AngleLabel, Colors, Shadow
+from pade_constants import ArmorLabel, PenLabel, AngleLabel, EffPenLabel, Colors, Shadow
 from pade_config import save_flat_config
 from pade_gui import update_label_properties
 
@@ -155,6 +152,50 @@ template = {
             manual=True,
             tooltip="{HEADER}Angle Display Threshold{/HEADER}{BODY}The minimum impact angle (in degrees) at which the angle label is shown. Set to 0 to always show it.{/BODY}",
         ),
+        templates.createEmpty(10),
+        templates.createLabel("<b>— Effective Penetration Label —</b>"),
+        templates.createCheckbox(
+            "Enable Effective Pen Label",
+            "eff_pen_label_enabled",
+            EffPenLabel.ENABLED,
+            tooltip="{HEADER}Enable Effective Pen Label{/HEADER}{BODY}Show or hide the shell's effective penetration label.{/BODY}",
+        ),
+        templates.createSlider(
+            "Eff Pen Label Font Size",
+            "eff_pen_label_font_size",
+            EffPenLabel.FONT_SIZE,
+            5,
+            100,
+            1,
+            format="{{value}}px",
+            tooltip="{HEADER}Effective Pen Label Font Size{/HEADER}{BODY}The size in pixels of the Effective Penetration Label.{/BODY}",
+        ),
+        templates.createNumericStepper(
+            "Eff Pen Label Horizontal Offset",
+            "eff_pen_label_x_offset",
+            EffPenLabel.X_OFFSET,
+            -2000,
+            2000,
+            1,
+            manual=True,
+            tooltip="{HEADER}Effective Pen Label Horizontal Offset{/HEADER}{BODY}The effective pen label's horizontal offset from the center of the screen. Positive values move it to the right.{/BODY}",
+        ),
+        templates.createNumericStepper(
+            "Eff Pen Label Vertical Offset",
+            "eff_pen_label_y_offset",
+            EffPenLabel.Y_OFFSET,
+            -2000,
+            2000,
+            1,
+            manual=True,
+            tooltip="{HEADER}Effective Pen Label Vertical Offset{/HEADER}{BODY}The effective pen label's vertical offset from the center of the screen. Positive values move it down.{/BODY}",
+        ),
+        templates.createInput(
+            "Eff Pen Label Format",
+            "eff_pen_label_format",
+            EffPenLabel.LABEL_FORMAT,
+            tooltip="{HEADER}Effective Pen Label Format{/HEADER}{BODY}The display format of the effective pen label. '{eff_pen}' will be replaced with the shell's effective penetration.{/BODY}",
+        ),
     ],
     "column2": [
         templates.createLabel("<b>— Colors —</b>"),
@@ -242,6 +283,11 @@ def on_settings_save(linkage, new_settings):
         AngleLabel.Y_OFFSET = new_settings["angle_label_y_offset"]
         AngleLabel.LABEL_FORMAT = new_settings["angle_label_format"]
         AngleLabel.DISPLAY_THRESHOLD = new_settings["angle_label_display_threshold"]
+        EffPenLabel.ENABLED = new_settings["eff_pen_label_enabled"]
+        EffPenLabel.FONT_SIZE = new_settings["eff_pen_label_font_size"]
+        EffPenLabel.X_OFFSET = new_settings["eff_pen_label_x_offset"]
+        EffPenLabel.Y_OFFSET = new_settings["eff_pen_label_y_offset"]
+        EffPenLabel.LABEL_FORMAT = new_settings["eff_pen_label_format"]
         Colors.GREEN = new_settings["color_green"]
         Colors.ORANGE = new_settings["color_orange"]
         Colors.RED = new_settings["color_red"]
