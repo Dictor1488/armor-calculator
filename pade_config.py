@@ -7,21 +7,21 @@ DEFAULT_CONFIG = {
         "x_offset": 0,
         "y_offset": 30,
         "font_size": 20,
-        "label_format": "{armor}",
+        "label_format": "{value}",
     },
     "pen_label": {
         "enabled": True,
         "x_offset": 0,
         "y_offset": 50,
         "font_size": 16,
-        "label_format": "{prob}%",
+        "label_format": "{value}%",
     },
     "angle_label": {
         "enabled": True,
         "x_offset": 30,
         "y_offset": 35,
         "font_size": 16,
-        "label_format": "{angle}°",
+        "label_format": "{value}°",
         "display_threshold": 65,
     },
     "eff_pen_label": {
@@ -29,7 +29,7 @@ DEFAULT_CONFIG = {
         "x_offset": -30,
         "y_offset": 35,
         "font_size": 16,
-        "label_format": "{eff_pen}",
+        "label_format": "{value}",
     },
     "colors": {
         "green_chance": "6BF40D",

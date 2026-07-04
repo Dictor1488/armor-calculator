@@ -15,7 +15,7 @@ def safe_get_setting(label, attribute):
     return user_settings[label][attribute]
 
 
-class Colors:
+class Colors(object):
     RED = safe_get_color("red_chance")
     YELLOW = "FFFF00"
     ORANGE = safe_get_color("orange_chance")
@@ -23,8 +23,17 @@ class Colors:
     GREY = "808080"
     PURPLE = safe_get_color("ricochet")
 
+    @classmethod
+    def get_color_from_prob(cls, prob):
+        if prob <= 7:
+            return cls.RED
+        elif prob >= 93:
+            return cls.GREEN
+        else:
+            return cls.ORANGE
 
-class ArmorLabel:
+
+class ArmorLabelSettings:
     ENABLED = safe_get_setting("armor_label", "enabled")
     LABEL_FORMAT = safe_get_setting("armor_label", "label_format")
     FONT_SIZE = safe_get_setting("armor_label", "font_size")
@@ -32,7 +41,7 @@ class ArmorLabel:
     Y_OFFSET = safe_get_setting("armor_label", "y_offset")
 
 
-class PenLabel:
+class PenLabelSettings:
     ENABLED = safe_get_setting("pen_label", "enabled")
     LABEL_FORMAT = safe_get_setting("pen_label", "label_format")
     FONT_SIZE = safe_get_setting("pen_label", "font_size")
@@ -40,7 +49,7 @@ class PenLabel:
     Y_OFFSET = safe_get_setting("pen_label", "y_offset")
 
 
-class AngleLabel:
+class AngleLabelSettings:
     ENABLED = safe_get_setting("angle_label", "enabled")
     LABEL_FORMAT = safe_get_setting("angle_label", "label_format")
     FONT_SIZE = safe_get_setting("angle_label", "font_size")
@@ -49,7 +58,7 @@ class AngleLabel:
     DISPLAY_THRESHOLD = safe_get_setting("angle_label", "display_threshold")
 
 
-class EffPenLabel:
+class EffPenLabelSettings:
     ENABLED = safe_get_setting("eff_pen_label", "enabled")
     LABEL_FORMAT = safe_get_setting("eff_pen_label", "label_format")
     FONT_SIZE = safe_get_setting("eff_pen_label", "font_size")
@@ -57,7 +66,15 @@ class EffPenLabel:
     Y_OFFSET = safe_get_setting("eff_pen_label", "y_offset")
 
 
-class Shadow:
+class KillLabelSettings:
+    ENABLED = True
+    LABEL_FORMAT = "{value}%"
+    FONT_SIZE = 14
+    X_OFFSET = 0
+    Y_OFFSET = 66
+
+
+class ShadowSettings:
     COLOR = safe_get_setting("shadow", "shadow_color")
     ALPHA = safe_get_setting("shadow", "shadow_alpha")
     LENGTH = safe_get_setting("shadow", "shadow_length")

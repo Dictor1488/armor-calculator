@@ -3,9 +3,11 @@ from AvatarInputHandler import gun_marker_ctrl  # type: ignore
 from aih_constants import SHOT_RESULT as _SHOT_RESULT  # type: ignore
 from PlayerEvents import g_playerEvents  # type: ignore
 from AvatarInputHandler import AvatarInputHandler  # type: ignore
-from items.components.component_constants import MODERN_HE_PIERCING_POWER_REDUCTION_FACTOR_FOR_SHIELDS  # type: ignore
+from items.components.component_constants import (  # type: ignore
+    MODERN_HE_PIERCING_POWER_REDUCTION_FACTOR_FOR_SHIELDS,
+)
 
-from pade_gui import update_gui, hide_labels, GuiState
+from pade_gui import gui_state
 
 
 def log(message):
@@ -39,14 +41,30 @@ def get_gaussian_probability(avg_pen, armor_val):
     return prob
 
 
-def call_update_gui(avg_pen, armor_val, ricochet, hit_body, hit_track, hit_angle_cos):
+def call_update_gui(
+    avg_pen,
+    armor_val,
+    ricochet,
+    hit_body,
+    hit_track,
+    hit_angle_cos,
+    alpha_dmg=(400, 400),
+    enemy_hp=0,
+):
+    """alpha_dmg is a tuple of (near_alpha, far_alpha). enemy_hp is an integer of the remaining enemy hp"""
     hit_angle = int(math.degrees(math.acos(hit_angle_cos)))
 
     prob = 0
+    kill_roll_prob = 0
     if not ricochet and hit_body:
         prob = get_gaussian_probability(avg_pen, armor_val)
+        kill_roll_prob = get_gaussian_probability(alpha_dmg[0], enemy_hp)
+    kill_prob = int(prob * kill_roll_prob // 100)
+    prob = int(prob)
 
-    update_gui(armor_val, prob, ricochet, hit_body, hit_track, hit_angle, avg_pen)
+    gui_state.update_gui(
+        armor_val, prob, ricochet, hit_body, hit_track, hit_angle, avg_pen, kill_prob
+    )
 
 
 log("Mod is loading")
@@ -139,9 +157,7 @@ def my_shot_result_default(
                 )
                 break
 
-            penetrationArmor = cls._computePenetrationArmor(
-                shell, hitAngleCos, matInfo
-            )
+            penetrationArmor = cls._computePenetrationArmor(shell, hitAngleCos, matInfo)
             total_armor_val += penetrationArmor
 
             if piercingPower > 0.0:
@@ -216,6 +232,8 @@ def my_shot_result_default(
         hit_body,
         hit_track,
         min_hit_angle_cos,
+        shell.armorDamage,
+        entity.health,
     )
 
     return result
@@ -399,22 +417,22 @@ original_getShotResult = gun_marker_ctrl._CrosshairShotResults.getShotResult.__f
 def my_get_shot_result(cls, gunMarker, excludeTeam=0, piercingMultiplier=1):
     """Override for original getShotResult. Is only called when reticle is visible."""
     result = original_getShotResult(cls, gunMarker, excludeTeam, piercingMultiplier)
-    if result == _SHOT_RESULT.UNDEFINED and (GuiState.armor_visible or GuiState.prob_visible or GuiState.angle_visible):
+    if result == _SHOT_RESULT.UNDEFINED and gui_state.is_visible():
         # only call hide if the gui is still visible
-        hide_labels()
+        gui_state.hide_all()
     return result
 
 
 def on_load_match():
     """Called when the player spawns into a map."""
-    hide_labels()
+    gui_state.hide_all()
 
     # log("New match detected: Resetting GUI.")
 
 
 def on_leave_match():
     """Called when the player leaves a match"""
-    hide_labels()
+    gui_state.hide_all()
 
     # log('Player has left the match. Resetting GUI.')
 
@@ -426,7 +444,7 @@ def my_activate_postmortem(self, *args, **kwargs):
     """Called when your vehicle is destroyed"""
     original_activate_postmortem(self, *args, **kwargs)
 
-    hide_labels()
+    gui_state.hide_all()
     # log('Player is dead. Hiding GUI.')
 
 

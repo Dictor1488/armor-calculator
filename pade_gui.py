@@ -1,278 +1,178 @@
-from pade_constants import Colors, ArmorLabel, PenLabel, AngleLabel, EffPenLabel, Shadow
+from pade_constants import (
+    Colors,
+    ArmorLabelSettings,
+    PenLabelSettings,
+    AngleLabelSettings,
+    EffPenLabelSettings,
+    KillLabelSettings,
+    ShadowSettings,
+)
 from gambiter import g_guiFlash  # type: ignore
 from gambiter.flash import COMPONENT_TYPE, COMPONENT_ALIGN  # type: ignore
-
-ARMOR_ALIAS = "pademinune_ArmorPenLabel"
-PROB_ALIAS = "pademinune_ProbabilityLabel"
-ANGLE_ALIAS = "pademinune_AngleLabel"
-EFF_PEN_ALIAS = "pademinune_EffPenLabel"
-
-
-class GuiState:
-    armor_visible = False
-    prob_visible = False
-    angle_visible = False
-    track_visible = False
-    eff_pen_visible = False
-    _last_armor_text = None  # type: str | None
-    _last_prob_text = None  # type: str | None
-    _last_angle_text = None  # type: str | None
-    _last_eff_pen_text = None  # type: str | None
 
 
 def log(message):
     print("pademinune's Gui: " + str(message))
 
 
-def update_armor_label(armor_value, color):
-    interior_label = ArmorLabel.LABEL_FORMAT.format(armor=armor_value)
-    new_text = "<font size='{font_size}' color='#{color}' face='$FieldFont'>{label_format}</font>".format(
-        font_size=ArmorLabel.FONT_SIZE, color=color, label_format=interior_label
-    )
-
-    if new_text == GuiState._last_armor_text and GuiState.armor_visible:
-        return
-
-    GuiState._last_armor_text = new_text
-    GuiState.armor_visible = True
-    g_guiFlash.updateComponent(ARMOR_ALIAS, {"text": new_text, "visible": True})
+ARMOR_ALIAS = "pademinune_ArmorLabel"
+PEN_ALIAS = "pademinune_PenLabel"
+ANGLE_ALIAS = "pademinune_AngleLabel"
+EFF_PEN_ALIAS = "pademinune_EffPenLabel"
+KILL_ALIAS = "pademinune_KillLabel"
 
 
-def update_prob_label(prob, color):
-    interior_label = PenLabel.LABEL_FORMAT.format(prob=prob)
-    new_text = "<font size='{font_size}' color='#{color}' face='$FieldFont'>{label_format}</font>".format(
-        font_size=PenLabel.FONT_SIZE, color=color, label_format=interior_label
-    )
+class GuiState(object):
+    def __init__(self):
+        self.armor_label = Label(ARMOR_ALIAS, ArmorLabelSettings)
+        self.pen_label = Label(PEN_ALIAS, PenLabelSettings)
+        self.angle_label = AngleLabel(ANGLE_ALIAS, AngleLabelSettings)
+        self.eff_pen_label = Label(EFF_PEN_ALIAS, EffPenLabelSettings)
+        self.kill_label = Label(KILL_ALIAS, KillLabelSettings)
+        self.labels = [
+            self.armor_label,
+            self.pen_label,
+            self.angle_label,
+            self.eff_pen_label,
+            self.kill_label,
+        ]
 
-    if new_text == GuiState._last_prob_text and GuiState.prob_visible:
-        return
+    def is_visible(self):
+        for label in self.labels:
+            if label.visible:
+                return True
+        return False
 
-    GuiState._last_prob_text = new_text
-    GuiState.prob_visible = True
-    g_guiFlash.updateComponent(PROB_ALIAS, {"text": new_text, "visible": True})
+    def hide_all(self):
+        for label in self.labels:
+            if label.visible:
+                label.hide()
 
-
-def update_angle_label(angle, color):
-    # only show if angle >= 60 deg
-    if angle < AngleLabel.DISPLAY_THRESHOLD and GuiState.angle_visible:
-        hide_angle_label()
-        return
-    elif angle < AngleLabel.DISPLAY_THRESHOLD and not GuiState.angle_visible:
-        # already not visible
-        return
-    
-
-    interior_label = AngleLabel.LABEL_FORMAT.format(angle=angle)
-    new_text = "<font size='{font_size}' color='#{color}' face='$FieldFont'>{label_format}</font>".format(
-        font_size=AngleLabel.FONT_SIZE, color=color, label_format=interior_label
-    )
-
-    if new_text == GuiState._last_angle_text and GuiState.angle_visible:
-        return
-
-    GuiState._last_angle_text = new_text
-    GuiState.angle_visible = True
-    g_guiFlash.updateComponent(ANGLE_ALIAS, {"text": new_text, "visible": True})
-
-
-def update_eff_pen_label(eff_pen, color):
-    interior_label = EffPenLabel.LABEL_FORMAT.format(eff_pen=eff_pen)
-    new_text = "<font size='{font_size}' color='#{color}' face='$FieldFont'>{label_format}</font>".format(
-        font_size=EffPenLabel.FONT_SIZE, color=color, label_format=interior_label
-    )
-
-    if new_text == GuiState._last_eff_pen_text and GuiState.eff_pen_visible:
-        return
-
-    GuiState._last_eff_pen_text = new_text
-    GuiState.eff_pen_visible = True
-    g_guiFlash.updateComponent(EFF_PEN_ALIAS, {"text": new_text, "visible": True})
-
-
-def hide_armor_label():
-    g_guiFlash.updateComponent(ARMOR_ALIAS, {"visible": False})
-    GuiState._last_armor_text = None
-    GuiState.armor_visible = False
-
-def hide_prob_label():
-    g_guiFlash.updateComponent(PROB_ALIAS, {"visible": False})
-    GuiState._last_prob_text = None
-    GuiState.prob_visible = False
-
-def hide_angle_label():
-    g_guiFlash.updateComponent(ANGLE_ALIAS, {"visible": False})
-    GuiState._last_angle_text = None
-    GuiState.angle_visible = False
-
-def hide_eff_pen_label():
-    g_guiFlash.updateComponent(EFF_PEN_ALIAS, {"visible": False})
-    GuiState._last_eff_pen_text = None
-    GuiState.eff_pen_visible = False
-
-def hide_labels():
-    if GuiState.armor_visible:
-        hide_armor_label()
-    if GuiState.prob_visible:
-        hide_prob_label()
-    if GuiState.angle_visible:
-        hide_angle_label()
-    if GuiState.eff_pen_visible:
-        hide_eff_pen_label()
-
-
-def update_gui(armor_value, prob, ricochet, hit_body, hit_track, hit_angle, avg_pen):
-
-    if ricochet:
-        # shell ricochet
-        color = Colors.PURPLE
-        if ArmorLabel.ENABLED:
-            update_armor_label("-", color)
-        if PenLabel.ENABLED:
-            update_prob_label(0, color)
-        if AngleLabel.ENABLED:
-            update_angle_label(hit_angle, color)
-        if EffPenLabel.ENABLED:
-            update_eff_pen_label(int(avg_pen), color)
-    elif not hit_body:
-        # shell only hits spaced armor or tracks
-        hide_labels()
-    else:
-        color = Colors.GREY
-        if prob <= 7:
-            # armor_val is right of z = 1.5
-            color = Colors.RED
-        elif prob >= 93:
-            # armor_val is left of z = -1.5
-            color = Colors.GREEN
+    def update_gui(
+        self,
+        armor_value,
+        prob,
+        ricochet,
+        hit_body,
+        hit_track,
+        hit_angle,
+        avg_pen,
+        kill_prob,
+    ):
+        if ricochet:
+            # shell ricochet
+            color = Colors.PURPLE
+            if self.armor_label.settings.ENABLED:
+                self.armor_label.update_gui("-", color)
+            if self.pen_label.settings.ENABLED:
+                self.pen_label.update_gui(0, color)
+            if self.angle_label.settings.ENABLED:
+                self.angle_label.update_gui(hit_angle, color)
+            if self.eff_pen_label.settings.ENABLED:
+                self.eff_pen_label.update_gui(int(avg_pen), color)
+            if self.kill_label.settings.ENABLED and self.kill_label.visible:
+                self.kill_label.hide()
+        elif not hit_body:
+            # shell only hits spaced armor or tracks
+            self.hide_all()
         else:
-            color = Colors.ORANGE
+            color = Colors.get_color_from_prob(prob)
 
-        if ArmorLabel.ENABLED:
-            update_armor_label(int(armor_value), color)
-        if PenLabel.ENABLED:
-            update_prob_label(int(prob), color)
-        if AngleLabel.ENABLED:
-            update_angle_label(hit_angle, color)
-        if EffPenLabel.ENABLED:
-            update_eff_pen_label(int(avg_pen), color)
+            if self.armor_label.settings.ENABLED:
+                self.armor_label.update_gui(int(armor_value), color)
+            if self.pen_label.settings.ENABLED:
+                self.pen_label.update_gui(int(prob), color)
+            if self.angle_label.settings.ENABLED:
+                self.angle_label.update_gui(hit_angle, color)
+            if self.eff_pen_label.settings.ENABLED:
+                self.eff_pen_label.update_gui(int(avg_pen), color)
+            if self.kill_label.settings.ENABLED:
+                if kill_prob > 0:
+                    self.kill_label.update_gui(
+                        kill_prob, Colors.get_color_from_prob(kill_prob)
+                    )
+                elif self.kill_label.visible:
+                    self.kill_label.hide()
+
+    def update_properties(self):
+        for label in self.labels:
+            label.update_properties()
+
+
+class Label(object):
+    def __init__(self, alias, settings):
+        self.alias = alias
+        self.settings = settings
+        self.visible = False
+        self.last_text = None
+        properties = {
+            "isHtml": True,
+            "text": "",
+            "glowfilter": _build_glowfilter(),
+            "alignX": COMPONENT_ALIGN.CENTER,
+            "alignY": COMPONENT_ALIGN.CENTER,
+            "x": settings.X_OFFSET,
+            "y": settings.Y_OFFSET,
+            "visible": False,
+        }
+        g_guiFlash.createComponent(alias, COMPONENT_TYPE.LABEL, properties)
+
+    def hide(self):
+        if self.visible:
+            g_guiFlash.updateComponent(self.alias, {"visible": False})
+            self.visible = False
+            self.last_text = None
+
+    def update_gui(self, value, color):
+        interior_text = self.settings.LABEL_FORMAT.format(value=value)
+        new_text = "<font size='{font_size}' color='#{color}' face='$FieldFont'>{interior_text}</font>".format(
+            font_size=self.settings.FONT_SIZE, color=color, interior_text=interior_text
+        )
+
+        if new_text == self.last_text and self.visible:
+            return
+
+        self.last_text = new_text
+        self.visible = True
+        g_guiFlash.updateComponent(self.alias, {"text": new_text, "visible": True})
+
+    def update_properties(self):
+        new_properties = {
+            "x": self.settings.X_OFFSET,
+            "y": self.settings.Y_OFFSET,
+            "glowfilter": _build_glowfilter(),
+        }
+        if not self.settings.ENABLED:
+            self.hide()
+        g_guiFlash.updateComponent(self.alias, new_properties)
+
+
+class AngleLabel(Label):
+    def __init__(self, alias, settings):
+        super(AngleLabel, self).__init__(alias, settings)
+
+    def update_gui(self, value, color):
+        if value < self.settings.DISPLAY_THRESHOLD:
+            self.hide()
+            return
+        super(AngleLabel, self).update_gui(value, color)
+
+
+def _build_glowfilter():
+    return {
+        "color": int(ShadowSettings.COLOR, 16),
+        "alpha": ShadowSettings.ALPHA / 10.0,
+        "blurX": ShadowSettings.LENGTH,
+        "blurY": ShadowSettings.LENGTH,
+        "strength": ShadowSettings.STRENGTH,
+        "quality": 2,
+    }
 
 
 log("Starting creation of armor and penetration gui components")
 
 
-def _build_glowfilter():
-    return {
-        "color": int(Shadow.COLOR, 16),
-        "alpha": Shadow.ALPHA / 10.0,
-        "blurX": Shadow.LENGTH,
-        "blurY": Shadow.LENGTH,
-        "strength": Shadow.STRENGTH,
-        "quality": 2,
-    }
-
-
-armor_label_properties = {
-    "isHtml": True,
-    "text": "",
-    "glowfilter": _build_glowfilter(),
-    "alignX": COMPONENT_ALIGN.CENTER,
-    "alignY": COMPONENT_ALIGN.CENTER,
-    "x": ArmorLabel.X_OFFSET,
-    "y": ArmorLabel.Y_OFFSET,
-    "visible": False,
-}
-
-probability_label_properties = {
-    "isHtml": True,
-    "text": "",
-    "glowfilter": _build_glowfilter(),
-    "alignX": COMPONENT_ALIGN.CENTER,
-    "alignY": COMPONENT_ALIGN.CENTER,
-    "x": PenLabel.X_OFFSET,
-    "y": PenLabel.Y_OFFSET,
-    "visible": False,
-}
-
-angle_label_properties = {
-    "isHtml": True,
-    "text": "",
-    "glowfilter": _build_glowfilter(),
-    "alignX": COMPONENT_ALIGN.CENTER,
-    "alignY": COMPONENT_ALIGN.CENTER,
-    "x": AngleLabel.X_OFFSET,
-    "y": AngleLabel.Y_OFFSET,
-    "visible": False,
-}
-
-eff_pen_label_properties = {
-    "isHtml": True,
-    "text": "",
-    "glowfilter": _build_glowfilter(),
-    "alignX": COMPONENT_ALIGN.CENTER,
-    "alignY": COMPONENT_ALIGN.CENTER,
-    "x": EffPenLabel.X_OFFSET,
-    "y": EffPenLabel.Y_OFFSET,
-    "visible": False,
-}
-
-# create the armor value label
-g_guiFlash.createComponent(ARMOR_ALIAS, COMPONENT_TYPE.LABEL, armor_label_properties)
-# create the probability label
-g_guiFlash.createComponent(
-    PROB_ALIAS, COMPONENT_TYPE.LABEL, probability_label_properties
-)
-# create the angle label
-g_guiFlash.createComponent(ANGLE_ALIAS, COMPONENT_TYPE.LABEL, angle_label_properties)
-# create the effective penetration label
-g_guiFlash.createComponent(EFF_PEN_ALIAS, COMPONENT_TYPE.LABEL, eff_pen_label_properties)
-
-
-def update_label_properties():
-    glowfilter = _build_glowfilter()
-
-    armor_props = {
-        "x": ArmorLabel.X_OFFSET,
-        "y": ArmorLabel.Y_OFFSET,
-        "glowfilter": glowfilter,
-    }
-    if not ArmorLabel.ENABLED:
-        armor_props["visible"] = False
-        GuiState._last_armor_text = None
-        GuiState.armor_visible = False
-    g_guiFlash.updateComponent(ARMOR_ALIAS, armor_props)
-
-    pen_props = {
-        "x": PenLabel.X_OFFSET,
-        "y": PenLabel.Y_OFFSET,
-        "glowfilter": glowfilter,
-    }
-    if not PenLabel.ENABLED:
-        pen_props["visible"] = False
-        GuiState._last_prob_text = None
-        GuiState.prob_visible = False
-    g_guiFlash.updateComponent(PROB_ALIAS, pen_props)
-
-    angle_props = {
-        "x": AngleLabel.X_OFFSET,
-        "y": AngleLabel.Y_OFFSET,
-        "glowfilter": glowfilter,
-    }
-    if not AngleLabel.ENABLED:
-        angle_props["visible"] = False
-        GuiState._last_angle_text = None
-        GuiState.angle_visible = False
-    g_guiFlash.updateComponent(ANGLE_ALIAS, angle_props)
-
-    eff_pen_props = {
-        "x": EffPenLabel.X_OFFSET,
-        "y": EffPenLabel.Y_OFFSET,
-        "glowfilter": glowfilter,
-    }
-    if not EffPenLabel.ENABLED:
-        eff_pen_props["visible"] = False
-        GuiState._last_eff_pen_text = None
-        GuiState.eff_pen_visible = False
-    g_guiFlash.updateComponent(EFF_PEN_ALIAS, eff_pen_props)
+gui_state = GuiState()
 
 
 log("GUI components have been created!")

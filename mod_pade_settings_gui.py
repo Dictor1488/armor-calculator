@@ -1,8 +1,15 @@
 from gui.modsSettingsApi import g_modsSettingsApi, templates  # type: ignore
 
-from pade_constants import ArmorLabel, PenLabel, AngleLabel, EffPenLabel, Colors, Shadow
+from pade_constants import (
+    ArmorLabelSettings,
+    PenLabelSettings,
+    AngleLabelSettings,
+    EffPenLabelSettings,
+    Colors,
+    ShadowSettings,
+)
 from pade_config import save_flat_config
-from pade_gui import update_label_properties
+from pade_gui import gui_state
 
 mod_linkage = "pade_armor_calculator"
 modDataVersion = 1
@@ -15,13 +22,13 @@ template = {
         templates.createCheckbox(
             "Enable Armor Label",
             "armor_label_enabled",
-            ArmorLabel.ENABLED,
+            ArmorLabelSettings.ENABLED,
             tooltip="{HEADER}Enable Armor Label{/HEADER}{BODY}Show or hide the effective armor value label.{/BODY}",
         ),
         templates.createSlider(
             "Armor Label Font Size",
             "armor_label_font_size",
-            ArmorLabel.FONT_SIZE,
+            ArmorLabelSettings.FONT_SIZE,
             5,
             100,
             1,
@@ -31,7 +38,7 @@ template = {
         templates.createNumericStepper(
             "Armor Label Horizontal Offset",
             "armor_label_x_offset",
-            ArmorLabel.X_OFFSET,
+            ArmorLabelSettings.X_OFFSET,
             -2000,
             2000,
             1,
@@ -41,7 +48,7 @@ template = {
         templates.createNumericStepper(
             "Armor Label Vertical Offset",
             "armor_label_y_offset",
-            ArmorLabel.Y_OFFSET,
+            ArmorLabelSettings.Y_OFFSET,
             -2000,
             2000,
             1,
@@ -51,7 +58,7 @@ template = {
         templates.createInput(
             "Armor Label Format",
             "armor_label_format",
-            ArmorLabel.LABEL_FORMAT,
+            ArmorLabelSettings.LABEL_FORMAT,
             tooltip="{HEADER}Armor Label Format{/HEADER}{BODY}The display format of the armor label. '{armor}' will be replaced with the armor value.{/BODY}",
         ),
         templates.createEmpty(10),
@@ -59,13 +66,13 @@ template = {
         templates.createCheckbox(
             "Enable Probability Label",
             "pen_label_enabled",
-            PenLabel.ENABLED,
+            PenLabelSettings.ENABLED,
             tooltip="{HEADER}Enable Probability Label{/HEADER}{BODY}Show or hide the penetration probability label.{/BODY}",
         ),
         templates.createSlider(
             "Pen Label Font Size",
             "pen_label_font_size",
-            PenLabel.FONT_SIZE,
+            PenLabelSettings.FONT_SIZE,
             5,
             100,
             1,
@@ -75,7 +82,7 @@ template = {
         templates.createNumericStepper(
             "Pen Label Horizontal Offset",
             "pen_label_x_offset",
-            PenLabel.X_OFFSET,
+            PenLabelSettings.X_OFFSET,
             -2000,
             2000,
             1,
@@ -85,7 +92,7 @@ template = {
         templates.createNumericStepper(
             "Pen Label Vertical Offset",
             "pen_label_y_offset",
-            PenLabel.Y_OFFSET,
+            PenLabelSettings.Y_OFFSET,
             -2000,
             2000,
             1,
@@ -95,7 +102,7 @@ template = {
         templates.createInput(
             "Pen Label Format",
             "pen_label_format",
-            PenLabel.LABEL_FORMAT,
+            PenLabelSettings.LABEL_FORMAT,
             tooltip="{HEADER}Probability Label Format{/HEADER}{BODY}The display format of the probability label. '{prob}' will be replaced with the penetration probability.{/BODY}",
         ),
         templates.createEmpty(10),
@@ -103,13 +110,13 @@ template = {
         templates.createCheckbox(
             "Enable Angle Label",
             "angle_label_enabled",
-            AngleLabel.ENABLED,
+            AngleLabelSettings.ENABLED,
             tooltip="{HEADER}Enable Angle Label{/HEADER}{BODY}Show or hide the impact angle label.{/BODY}",
         ),
         templates.createSlider(
             "Angle Label Font Size",
             "angle_label_font_size",
-            AngleLabel.FONT_SIZE,
+            AngleLabelSettings.FONT_SIZE,
             5,
             100,
             1,
@@ -119,7 +126,7 @@ template = {
         templates.createNumericStepper(
             "Angle Label Horizontal Offset",
             "angle_label_x_offset",
-            AngleLabel.X_OFFSET,
+            AngleLabelSettings.X_OFFSET,
             -2000,
             2000,
             1,
@@ -129,7 +136,7 @@ template = {
         templates.createNumericStepper(
             "Angle Label Vertical Offset",
             "angle_label_y_offset",
-            AngleLabel.Y_OFFSET,
+            AngleLabelSettings.Y_OFFSET,
             -2000,
             2000,
             1,
@@ -139,13 +146,13 @@ template = {
         templates.createInput(
             "Angle Label Format",
             "angle_label_format",
-            AngleLabel.LABEL_FORMAT,
+            AngleLabelSettings.LABEL_FORMAT,
             tooltip="{HEADER}Angle Label Format{/HEADER}{BODY}The display format of the angle label. '{angle}' will be replaced with the impact angle in degrees.{/BODY}",
         ),
         templates.createNumericStepper(
             "Angle Display Threshold",
             "angle_label_display_threshold",
-            AngleLabel.DISPLAY_THRESHOLD,
+            AngleLabelSettings.DISPLAY_THRESHOLD,
             0,
             90,
             1,
@@ -157,13 +164,13 @@ template = {
         templates.createCheckbox(
             "Enable Effective Pen Label",
             "eff_pen_label_enabled",
-            EffPenLabel.ENABLED,
+            EffPenLabelSettings.ENABLED,
             tooltip="{HEADER}Enable Effective Pen Label{/HEADER}{BODY}Show or hide the shell's effective penetration label.{/BODY}",
         ),
         templates.createSlider(
             "Eff Pen Label Font Size",
             "eff_pen_label_font_size",
-            EffPenLabel.FONT_SIZE,
+            EffPenLabelSettings.FONT_SIZE,
             5,
             100,
             1,
@@ -173,7 +180,7 @@ template = {
         templates.createNumericStepper(
             "Eff Pen Label Horizontal Offset",
             "eff_pen_label_x_offset",
-            EffPenLabel.X_OFFSET,
+            EffPenLabelSettings.X_OFFSET,
             -2000,
             2000,
             1,
@@ -183,7 +190,7 @@ template = {
         templates.createNumericStepper(
             "Eff Pen Label Vertical Offset",
             "eff_pen_label_y_offset",
-            EffPenLabel.Y_OFFSET,
+            EffPenLabelSettings.Y_OFFSET,
             -2000,
             2000,
             1,
@@ -193,7 +200,7 @@ template = {
         templates.createInput(
             "Eff Pen Label Format",
             "eff_pen_label_format",
-            EffPenLabel.LABEL_FORMAT,
+            EffPenLabelSettings.LABEL_FORMAT,
             tooltip="{HEADER}Effective Pen Label Format{/HEADER}{BODY}The display format of the effective pen label. '{eff_pen}' will be replaced with the shell's effective penetration.{/BODY}",
         ),
     ],
@@ -228,13 +235,13 @@ template = {
         templates.createColorChoice(
             "Shadow Color",
             "shadow_color",
-            Shadow.COLOR,
+            ShadowSettings.COLOR,
             tooltip="{HEADER}Shadow Color{/HEADER}{BODY}The color of the text shadow/glow.{/BODY}",
         ),
         templates.createSlider(
             "Shadow Opacity",
             "shadow_alpha",
-            Shadow.ALPHA,
+            ShadowSettings.ALPHA,
             0,
             10,
             1,
@@ -244,7 +251,7 @@ template = {
         templates.createSlider(
             "Shadow Length",
             "shadow_length",
-            Shadow.LENGTH,
+            ShadowSettings.LENGTH,
             0,
             10,
             1,
@@ -254,7 +261,7 @@ template = {
         templates.createSlider(
             "Shadow Strength",
             "shadow_strength",
-            Shadow.STRENGTH,
+            ShadowSettings.STRENGTH,
             0,
             10,
             1,
@@ -267,38 +274,40 @@ template = {
 
 def on_settings_save(linkage, new_settings):
     if linkage == mod_linkage:
-        ArmorLabel.ENABLED = new_settings["armor_label_enabled"]
-        ArmorLabel.FONT_SIZE = new_settings["armor_label_font_size"]
-        ArmorLabel.X_OFFSET = new_settings["armor_label_x_offset"]
-        ArmorLabel.Y_OFFSET = new_settings["armor_label_y_offset"]
-        ArmorLabel.LABEL_FORMAT = new_settings["armor_label_format"]
-        PenLabel.ENABLED = new_settings["pen_label_enabled"]
-        PenLabel.FONT_SIZE = new_settings["pen_label_font_size"]
-        PenLabel.X_OFFSET = new_settings["pen_label_x_offset"]
-        PenLabel.Y_OFFSET = new_settings["pen_label_y_offset"]
-        PenLabel.LABEL_FORMAT = new_settings["pen_label_format"]
-        AngleLabel.ENABLED = new_settings["angle_label_enabled"]
-        AngleLabel.FONT_SIZE = new_settings["angle_label_font_size"]
-        AngleLabel.X_OFFSET = new_settings["angle_label_x_offset"]
-        AngleLabel.Y_OFFSET = new_settings["angle_label_y_offset"]
-        AngleLabel.LABEL_FORMAT = new_settings["angle_label_format"]
-        AngleLabel.DISPLAY_THRESHOLD = new_settings["angle_label_display_threshold"]
-        EffPenLabel.ENABLED = new_settings["eff_pen_label_enabled"]
-        EffPenLabel.FONT_SIZE = new_settings["eff_pen_label_font_size"]
-        EffPenLabel.X_OFFSET = new_settings["eff_pen_label_x_offset"]
-        EffPenLabel.Y_OFFSET = new_settings["eff_pen_label_y_offset"]
-        EffPenLabel.LABEL_FORMAT = new_settings["eff_pen_label_format"]
+        ArmorLabelSettings.ENABLED = new_settings["armor_label_enabled"]
+        ArmorLabelSettings.FONT_SIZE = new_settings["armor_label_font_size"]
+        ArmorLabelSettings.X_OFFSET = new_settings["armor_label_x_offset"]
+        ArmorLabelSettings.Y_OFFSET = new_settings["armor_label_y_offset"]
+        ArmorLabelSettings.LABEL_FORMAT = new_settings["armor_label_format"]
+        PenLabelSettings.ENABLED = new_settings["pen_label_enabled"]
+        PenLabelSettings.FONT_SIZE = new_settings["pen_label_font_size"]
+        PenLabelSettings.X_OFFSET = new_settings["pen_label_x_offset"]
+        PenLabelSettings.Y_OFFSET = new_settings["pen_label_y_offset"]
+        PenLabelSettings.LABEL_FORMAT = new_settings["pen_label_format"]
+        AngleLabelSettings.ENABLED = new_settings["angle_label_enabled"]
+        AngleLabelSettings.FONT_SIZE = new_settings["angle_label_font_size"]
+        AngleLabelSettings.X_OFFSET = new_settings["angle_label_x_offset"]
+        AngleLabelSettings.Y_OFFSET = new_settings["angle_label_y_offset"]
+        AngleLabelSettings.LABEL_FORMAT = new_settings["angle_label_format"]
+        AngleLabelSettings.DISPLAY_THRESHOLD = new_settings[
+            "angle_label_display_threshold"
+        ]
+        EffPenLabelSettings.ENABLED = new_settings["eff_pen_label_enabled"]
+        EffPenLabelSettings.FONT_SIZE = new_settings["eff_pen_label_font_size"]
+        EffPenLabelSettings.X_OFFSET = new_settings["eff_pen_label_x_offset"]
+        EffPenLabelSettings.Y_OFFSET = new_settings["eff_pen_label_y_offset"]
+        EffPenLabelSettings.LABEL_FORMAT = new_settings["eff_pen_label_format"]
         Colors.GREEN = new_settings["color_green"]
         Colors.ORANGE = new_settings["color_orange"]
         Colors.RED = new_settings["color_red"]
         Colors.PURPLE = new_settings["color_ricochet"]
-        Shadow.COLOR = new_settings["shadow_color"]
-        Shadow.ALPHA = new_settings["shadow_alpha"]
-        Shadow.LENGTH = new_settings["shadow_length"]
-        Shadow.STRENGTH = new_settings["shadow_strength"]
+        ShadowSettings.COLOR = new_settings["shadow_color"]
+        ShadowSettings.ALPHA = new_settings["shadow_alpha"]
+        ShadowSettings.LENGTH = new_settings["shadow_length"]
+        ShadowSettings.STRENGTH = new_settings["shadow_strength"]
 
         save_flat_config(new_settings)
-        update_label_properties()
+        gui_state.update_properties()
 
 
 g_modsSettingsApi.setModTemplate(mod_linkage, template, on_settings_save, None)
