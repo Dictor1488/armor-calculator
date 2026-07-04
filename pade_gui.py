@@ -97,12 +97,9 @@ class GuiState(object):
                     )
                 elif self.kill_label.visible:
                     self.kill_label.hide()
-        
+
         if pade_track.TrackState.ENABLED:
-            if (
-                hit_track
-                and (color == Colors.GREEN or color == Colors.ORANGE)
-            ):
+            if hit_track and (color == Colors.GREEN or color == Colors.ORANGE):
                 pade_track.update_track_label(color)
             elif pade_track.TrackState.track_visible:
                 pade_track.hide_track_label()

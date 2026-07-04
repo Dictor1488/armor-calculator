@@ -6,10 +6,12 @@ TRACK_ALIAS = "pademinune_TrackLabel"
 GREEN_TRACK_ALIAS = "pademinune_GreenTrack"
 ORANGE_TRACK_ALIAS = "pademinune_OrangeTrack"
 
+
 class TrackState:
     ENABLED = False
     track_visible = False
     _last_track_color = None  # type: str | None
+
 
 def update_track_label(color):
     if color == TrackState._last_track_color and TrackState.track_visible:
@@ -34,7 +36,6 @@ def hide_track_label():
     g_guiFlash.updateComponent(ORANGE_TRACK_ALIAS, track_changes)
     TrackState._last_track_color = None
     TrackState.track_visible = False
-
 
 
 green_track_properties = {
