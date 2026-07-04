@@ -7,6 +7,7 @@ from pade_constants import (
     KillLabelSettings,
     ShadowSettings,
 )
+import pade_track
 from gambiter import g_guiFlash  # type: ignore
 from gambiter.flash import COMPONENT_TYPE, COMPONENT_ALIGN  # type: ignore
 
@@ -47,6 +48,8 @@ class GuiState(object):
         for label in self.labels:
             if label.visible:
                 label.hide()
+        if pade_track.TrackState.ENABLED and pade_track.TrackState.track_visible:
+            pade_track.hide_track_label()
 
     def update_gui(
         self,
@@ -74,6 +77,7 @@ class GuiState(object):
                 self.kill_label.hide()
         elif not hit_body:
             # shell only hits spaced armor or tracks
+            color = Colors.RED
             self.hide_all()
         else:
             color = Colors.get_color_from_prob(prob)
@@ -93,6 +97,15 @@ class GuiState(object):
                     )
                 elif self.kill_label.visible:
                     self.kill_label.hide()
+        
+        if pade_track.TrackState.ENABLED:
+            if (
+                hit_track
+                and (color == Colors.GREEN or color == Colors.ORANGE)
+            ):
+                pade_track.update_track_label(color)
+            elif pade_track.TrackState.track_visible:
+                pade_track.hide_track_label()
 
     def update_properties(self):
         for label in self.labels:
