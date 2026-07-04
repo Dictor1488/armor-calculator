@@ -31,6 +31,13 @@ DEFAULT_CONFIG = {
         "font_size": 16,
         "label_format": "{value}",
     },
+    "kill_label": {
+        "enabled": True,
+        "x_offset": 0,
+        "y_offset": 66,
+        "font_size": 14,
+        "label_format": "{value}%",
+    },
     "colors": {
         "green_chance": "6BF40D",
         "orange_chance": "FFAD00",
@@ -64,6 +71,30 @@ def read_config():
     return user_config
 
 
+LEGACY_LABEL_FORMAT_FIELDS = {
+    "armor_label": "armor",
+    "pen_label": "prob",
+    "angle_label": "angle",
+    "eff_pen_label": "eff_pen",
+    "kill_label": "kill_prob",
+}
+
+
+def migrate_label_format_placeholders(user_config):
+    changed = False
+    for section, old_field in LEGACY_LABEL_FORMAT_FIELDS.items():
+        label_format = user_config.get(section, {}).get("label_format")
+        if not label_format:
+            continue
+        old_placeholder = "{" + old_field + "}"
+        if old_placeholder in label_format:
+            user_config[section]["label_format"] = label_format.replace(
+                old_placeholder, "{value}"
+            )
+            changed = True
+    return changed
+
+
 def migrate_config(user_config):
     changed = False
     for section, defaults in DEFAULT_CONFIG.items():
@@ -75,6 +106,8 @@ def migrate_config(user_config):
                 if key not in user_config[section]:
                     user_config[section][key] = value
                     changed = True
+    if migrate_label_format_placeholders(user_config):
+        changed = True
     if changed:
         with open(CONFIG_PATH, "w") as f:
             json.dump(user_config, f, indent=4)
@@ -111,6 +144,13 @@ def save_flat_config(settings):
             "y_offset": settings["eff_pen_label_y_offset"],
             "font_size": settings["eff_pen_label_font_size"],
             "label_format": settings["eff_pen_label_format"],
+        },
+        "kill_label": {
+            "enabled": settings["kill_label_enabled"],
+            "x_offset": settings["kill_label_x_offset"],
+            "y_offset": settings["kill_label_y_offset"],
+            "font_size": settings["kill_label_font_size"],
+            "label_format": settings["kill_label_format"],
         },
         "colors": {
             "green_chance": settings["color_green"],

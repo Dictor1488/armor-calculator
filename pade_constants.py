@@ -67,11 +67,11 @@ class EffPenLabelSettings:
 
 
 class KillLabelSettings:
-    ENABLED = True
-    LABEL_FORMAT = "{value}%"
-    FONT_SIZE = 14
-    X_OFFSET = 0
-    Y_OFFSET = 66
+    ENABLED = safe_get_setting("kill_label", "enabled")
+    LABEL_FORMAT = safe_get_setting("kill_label", "label_format")
+    FONT_SIZE = safe_get_setting("kill_label", "font_size")
+    X_OFFSET = safe_get_setting("kill_label", "x_offset")
+    Y_OFFSET = safe_get_setting("kill_label", "y_offset")
 
 
 class ShadowSettings:

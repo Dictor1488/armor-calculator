@@ -5,6 +5,7 @@ from pade_constants import (
     PenLabelSettings,
     AngleLabelSettings,
     EffPenLabelSettings,
+    KillLabelSettings,
     Colors,
     ShadowSettings,
 )
@@ -15,7 +16,7 @@ mod_linkage = "pade_armor_calculator"
 modDataVersion = 1
 
 template = {
-    "modDisplayName": "pademinune's Armor Calculator",
+    "modDisplayName": "pademinune's Armor Penetration Calculator",
     "enabled": True,
     "column1": [
         templates.createLabel("<b>— Armor Label —</b>"),
@@ -205,6 +206,50 @@ template = {
         ),
     ],
     "column2": [
+        templates.createLabel("<b>— Kill Label —</b>"),
+        templates.createCheckbox(
+            "Enable Kill Label",
+            "kill_label_enabled",
+            KillLabelSettings.ENABLED,
+            tooltip="{HEADER}Enable Kill Label{/HEADER}{BODY}Show or hide the estimated kill chance label.{/BODY}",
+        ),
+        templates.createSlider(
+            "Kill Label Font Size",
+            "kill_label_font_size",
+            KillLabelSettings.FONT_SIZE,
+            5,
+            100,
+            1,
+            format="{{value}}px",
+            tooltip="{HEADER}Kill Label Font Size{/HEADER}{BODY}The size in pixels of the Kill Label.{/BODY}",
+        ),
+        templates.createNumericStepper(
+            "Kill Label Horizontal Offset",
+            "kill_label_x_offset",
+            KillLabelSettings.X_OFFSET,
+            -2000,
+            2000,
+            1,
+            manual=True,
+            tooltip="{HEADER}Kill Label Horizontal Offset{/HEADER}{BODY}The kill label's horizontal offset from the center of the screen. Positive values move it to the right.{/BODY}",
+        ),
+        templates.createNumericStepper(
+            "Kill Label Vertical Offset",
+            "kill_label_y_offset",
+            KillLabelSettings.Y_OFFSET,
+            -2000,
+            2000,
+            1,
+            manual=True,
+            tooltip="{HEADER}Kill Label Vertical Offset{/HEADER}{BODY}The kill label's vertical offset from the center of the screen. Positive values move it down.{/BODY}",
+        ),
+        templates.createInput(
+            "Kill Label Format",
+            "kill_label_format",
+            KillLabelSettings.LABEL_FORMAT,
+            tooltip="{HEADER}Kill Label Format{/HEADER}{BODY}The display format of the kill label. '{value}' will be replaced with the estimated kill chance.{/BODY}",
+        ),
+        templates.createEmpty(10),
         templates.createLabel("<b>— Colors —</b>"),
         templates.createColorChoice(
             "High Pen Chance",
@@ -297,6 +342,11 @@ def on_settings_save(linkage, new_settings):
         EffPenLabelSettings.X_OFFSET = new_settings["eff_pen_label_x_offset"]
         EffPenLabelSettings.Y_OFFSET = new_settings["eff_pen_label_y_offset"]
         EffPenLabelSettings.LABEL_FORMAT = new_settings["eff_pen_label_format"]
+        KillLabelSettings.ENABLED = new_settings["kill_label_enabled"]
+        KillLabelSettings.FONT_SIZE = new_settings["kill_label_font_size"]
+        KillLabelSettings.X_OFFSET = new_settings["kill_label_x_offset"]
+        KillLabelSettings.Y_OFFSET = new_settings["kill_label_y_offset"]
+        KillLabelSettings.LABEL_FORMAT = new_settings["kill_label_format"]
         Colors.GREEN = new_settings["color_green"]
         Colors.ORANGE = new_settings["color_orange"]
         Colors.RED = new_settings["color_red"]
