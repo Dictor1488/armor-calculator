@@ -14,13 +14,15 @@ This mod is also on the offical [Wargaming mod portal](https://wgmods.net/7605/)
 
 This mod displays the exact effective armor value, penetration probability, and angle of a tank you are aiming at.
 
-> *How is this different from other effective armor mods found in modpacks?*
+> *How is this different from other effective armor mods?*
 
-They don't compute and display the exact probability of penetrating.
-You would have to estimate this in the moment based on your shell's 
-penetration and their armor.
-This wastes crucial time and is very innacurate (especially since the distribution
-is not uniform).
+- They don't compute and display the exact probability of penetrating.
+    - You would have to estimate this in the moment based on your shell's penetration and their armor.
+    - This wastes crucial time and is very innacurate (especially since the distribution is not uniform).
+
+- This mod has more features and receives regular updates.
+    - If a WOT update modifies the client code in such a way that breaks these mods, this mod will be updated quickly.
+
 
 > *What is the best way to use this mod?*
 
@@ -42,9 +44,10 @@ optimal spot to shoot that will maximize your chance of penning.
     - Spaced armor
     - HEAT shell dissipation through spaced armor
 - Computes and displays probability of penetration
-- Displays the exact armor angle so that you know when to change angles to pen someone
-- Great performance since the mod uses the calculatons already done
-by the game
+- Computes and displays probability of killing a low hp tank
+    - Takes into account their armor and hp
+- Displays the exact armor angle so that you know when to change angles to turn a ricochet into a pen
+- Great performance since the mod uses calculations already done by the game
 - Customize the mod to your liking by changing the settings
 
 ### Config
@@ -75,3 +78,6 @@ In World of Tanks, a shell's actual penetration is sampled from a Gaussian distr
 For example, a shell with 100mm average penetration can roll anywhere from 75mm to 125mm, with most rolls clustering near 100mm.
 
 So if you have 400mm penetration, bouncing off targets with under 350mm effective armor is very unlikely.
+
+Credit to this [reddit post](https://www.reddit.com/r/WorldofTanks/comments/4z53s0/infographic_damage_spread_in_world_of_tanks/) for doing
+the research and discovering the distribution.
