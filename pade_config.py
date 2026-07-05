@@ -32,11 +32,11 @@ DEFAULT_CONFIG = {
         "label_format": "{value}",
     },
     "kill_label": {
-        "enabled": True,
+        "enabled": False,
         "x_offset": 0,
         "y_offset": 66,
         "font_size": 14,
-        "label_format": "{value}%",
+        "label_format": "† {value}%",
     },
     "colors": {
         "green_chance": "6BF40D",
