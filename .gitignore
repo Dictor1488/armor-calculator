@@ -3,3 +3,4 @@ bin/
 mod_gui_test.py
 .claude/
 benchmarks/
+.ruff_cache/
