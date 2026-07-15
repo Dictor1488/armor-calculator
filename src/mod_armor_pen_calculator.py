@@ -100,6 +100,9 @@ def my_shot_result_default(
     ignoredMaterials = set()
     debugPiercingsList = []
 
+    shellExtraData = cls._SHELL_EXTRA_DATA[shell.kind]
+    jetLossPPByDist = getattr(shellExtraData, "jetLossPPByDist", 0.0)
+
     for cDetails in collisionsDetails:
         if not isDestructible(entity, cDetails.compName):
             break
@@ -113,9 +116,7 @@ def my_shot_result_default(
         if isJet:
             jetDist = cDetails.dist - jetStartDist
             if jetDist > 0.0:
-                lossByDist = (
-                    1.0 - jetDist * cls._SHELL_EXTRA_DATA[shell.kind].jetLossPPByDist
-                )
+                lossByDist = 1.0 - jetDist * jetLossPPByDist
 
                 # add dissipation amount onto total armor
                 lost_pen = max(
@@ -216,7 +217,7 @@ def my_shot_result_default(
         # if piercingPower <= 0.0:
         #     break
 
-        if cls._SHELL_EXTRA_DATA[shell.kind].jetLossPPByDist > 0.0:
+        if jetLossPPByDist > 0.0:
             isJet = True
             mInfo = cDetails.matInfo
             armor = mInfo.armor if mInfo is not None else 0.0
