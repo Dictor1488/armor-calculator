@@ -1,4 +1,4 @@
-name: Збірка мода
+name: Збірка та реліз мода
 
 on:
   workflow_dispatch:
@@ -15,30 +15,42 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
       - name: Завантажити репозиторій
         uses: actions/checkout@v4
 
+      - name: Визначити версію
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${{ github.ref_name }}"
+          fi
+
+          VERSION="${VERSION#v}"
+          MOD_NAME="armor-calculator-${VERSION}"
+
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "MOD_NAME=${MOD_NAME}" >> "$GITHUB_ENV"
+          echo "RELEASE_TAG=v${VERSION}" >> "$GITHUB_ENV"
+
       - name: Підготувати структуру мода
         shell: bash
         run: |
           set -euo pipefail
 
-          VERSION="${{ github.event.inputs.version || github.ref_name }}"
-          VERSION="${VERSION#v}"
-          MOD_NAME="armor-calculator-${VERSION}"
-
           rm -rf build dist
           mkdir -p build/res/scripts/client/gui/mods
           mkdir -p dist
 
-          # Python-файли мода
           cp src/*.py build/res/scripts/client/gui/mods/
 
-          # Додаткові ресурси та конфігурації, якщо вони є в репозиторії
           if [ -d configs ]; then
             mkdir -p build/mods/configs
             cp -R configs/. build/mods/configs/
@@ -48,7 +60,6 @@ jobs:
             cp -R res/. build/res/
           fi
 
-          # Метадані пакета
           cat > build/meta.xml <<EOF
           <root>
             <id>armor.calculator</id>
@@ -58,19 +69,15 @@ jobs:
           </root>
           EOF
 
-          # .wotmod — це ZIP-архів зі спеціальним розширенням
           (
             cd build
             zip -9 -r "../dist/${MOD_NAME}.wotmod" .
           )
 
-          # Окремий ZIP для зручного завантаження
           (
             cd dist
             zip -9 "${MOD_NAME}.zip" "${MOD_NAME}.wotmod"
           )
-
-          echo "MOD_NAME=${MOD_NAME}" >> "$GITHUB_ENV"
 
       - name: Перевірити вміст збірки
         shell: bash
@@ -78,8 +85,9 @@ jobs:
           set -euo pipefail
           unzip -t "dist/${MOD_NAME}.wotmod"
           unzip -l "dist/${MOD_NAME}.wotmod"
+          ls -lah dist
 
-      - name: Завантажити артефакт
+      - name: Завантажити артефакт Actions
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.MOD_NAME }}
@@ -89,11 +97,20 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Створити GitHub Release для тегу
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
+      - name: Створити або оновити GitHub Release
+        uses: ncipollo/release-action@v1.14.0
         with:
-          files: |
-            dist/*.wotmod
-            dist/*.zip
-          generate_release_notes: true
+          tag: ${{ env.RELEASE_TAG }}
+          commit: ${{ github.sha }}
+          name: Armor Calculator ${{ env.VERSION }}
+          body: |
+            Збірка Armor Penetration Calculator для World of Tanks.
+
+            Виправлено сумісність із новою структурою даних снарядів та відсутнім параметром `jetLossPPByDist`.
+          artifacts: "dist/*.wotmod,dist/*.zip"
+          artifactErrorsFailBuild: true
+          allowUpdates: true
+          removeArtifacts: true
+          replacesArtifacts: true
+          makeLatest: true
+          token: ${{ secrets.GITHUB_TOKEN }}
