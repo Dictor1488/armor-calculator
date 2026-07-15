@@ -1,0 +1,99 @@
+name: Збірка мода
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Версія збірки"
+        required: true
+        default: "1.7.1"
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Завантажити репозиторій
+        uses: actions/checkout@v4
+
+      - name: Підготувати структуру мода
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION="${VERSION#v}"
+          MOD_NAME="armor-calculator-${VERSION}"
+
+          rm -rf build dist
+          mkdir -p build/res/scripts/client/gui/mods
+          mkdir -p dist
+
+          # Python-файли мода
+          cp src/*.py build/res/scripts/client/gui/mods/
+
+          # Додаткові ресурси та конфігурації, якщо вони є в репозиторії
+          if [ -d configs ]; then
+            mkdir -p build/mods/configs
+            cp -R configs/. build/mods/configs/
+          fi
+
+          if [ -d res ]; then
+            cp -R res/. build/res/
+          fi
+
+          # Метадані пакета
+          cat > build/meta.xml <<EOF
+          <root>
+            <id>armor.calculator</id>
+            <version>${VERSION}</version>
+            <name>Armor Penetration Calculator</name>
+            <description>Калькулятор ефективної броні та ймовірності пробиття для World of Tanks.</description>
+          </root>
+          EOF
+
+          # .wotmod — це ZIP-архів зі спеціальним розширенням
+          (
+            cd build
+            zip -9 -r "../dist/${MOD_NAME}.wotmod" .
+          )
+
+          # Окремий ZIP для зручного завантаження
+          (
+            cd dist
+            zip -9 "${MOD_NAME}.zip" "${MOD_NAME}.wotmod"
+          )
+
+          echo "MOD_NAME=${MOD_NAME}" >> "$GITHUB_ENV"
+
+      - name: Перевірити вміст збірки
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -t "dist/${MOD_NAME}.wotmod"
+          unzip -l "dist/${MOD_NAME}.wotmod"
+
+      - name: Завантажити артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.MOD_NAME }}
+          path: |
+            dist/*.wotmod
+            dist/*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Створити GitHub Release для тегу
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.wotmod
+            dist/*.zip
+          generate_release_notes: true
