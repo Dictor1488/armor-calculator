@@ -1,23 +1,25 @@
+# -*- coding: utf-8 -*-
 import json
 import os
+
 
 DEFAULT_CONFIG = {
     "armor_label": {
         "enabled": True,
         "x_offset": 0,
         "y_offset": 30,
-        "font_size": 20,
-        "label_format": "{penetration}/{armor}",
+        "font_size": 16,
+        "label_format": "{penetration}/{value}",
     },
     "pen_label": {
-        "enabled": True,
+        "enabled": False,
         "x_offset": 0,
         "y_offset": 50,
         "font_size": 16,
         "label_format": "{value}%",
     },
     "angle_label": {
-        "enabled": True,
+        "enabled": False,
         "x_offset": 30,
         "y_offset": 35,
         "font_size": 16,
@@ -98,16 +100,58 @@ def migrate_label_format_placeholders(user_config):
 def migrate_armor_label_format(user_config):
     armor_settings = user_config.get("armor_label", {})
     if armor_settings.get("label_format") == "{value}":
-        armor_settings["label_format"] = "{penetration}/{armor}"
+        armor_settings["label_format"] = "{penetration}/{value}"
         return True
     return False
+
+
+def migrate_new_display_defaults(user_config):
+    changed = False
+
+    armor_settings = user_config.get("armor_label", {})
+    if (
+        armor_settings.get("enabled") is True
+        and armor_settings.get("x_offset") == 0
+        and armor_settings.get("y_offset") == 30
+        and armor_settings.get("font_size") == 20
+        and armor_settings.get("label_format")
+        in ("{penetration}/{armor}", "{penetration}/{value}")
+    ):
+        armor_settings["font_size"] = 16
+        armor_settings["label_format"] = "{penetration}/{value}"
+        changed = True
+
+    pen_settings = user_config.get("pen_label", {})
+    if (
+        pen_settings.get("enabled") is True
+        and pen_settings.get("x_offset") == 0
+        and pen_settings.get("y_offset") == 50
+        and pen_settings.get("font_size") == 16
+        and pen_settings.get("label_format") == "{value}%"
+    ):
+        pen_settings["enabled"] = False
+        changed = True
+
+    angle_settings = user_config.get("angle_label", {})
+    if (
+        angle_settings.get("enabled") is True
+        and angle_settings.get("x_offset") == 30
+        and angle_settings.get("y_offset") == 35
+        and angle_settings.get("font_size") == 16
+        and angle_settings.get("label_format") == "{value}°"
+        and angle_settings.get("display_threshold") == 65
+    ):
+        angle_settings["enabled"] = False
+        changed = True
+
+    return changed
 
 
 def migrate_config(user_config):
     changed = False
     for section, defaults in DEFAULT_CONFIG.items():
         if section not in user_config:
-            user_config[section] = defaults
+            user_config[section] = defaults.copy()
             changed = True
         else:
             for key, value in defaults.items():
@@ -117,6 +161,8 @@ def migrate_config(user_config):
     if migrate_label_format_placeholders(user_config):
         changed = True
     if migrate_armor_label_format(user_config):
+        changed = True
+    if migrate_new_display_defaults(user_config):
         changed = True
     if changed:
         with open(CONFIG_PATH, "w") as f:
