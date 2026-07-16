@@ -62,17 +62,34 @@ class GuiState(object):
         avg_pen,
         kill_prob,
     ):
+        armor_value = int(armor_value)
+        avg_pen = int(avg_pen)
+
+        armor_format_values = {
+            "value": armor_value,
+            "armor": armor_value,
+            "penetration": avg_pen,
+        }
+
         if ricochet:
             # shell ricochet
             color = Colors.PURPLE
             if self.armor_label.settings.ENABLED:
-                self.armor_label.update_gui("-", color)
+                self.armor_label.update_gui(
+                    "-",
+                    color,
+                    {
+                        "value": "-",
+                        "armor": "-",
+                        "penetration": avg_pen,
+                    },
+                )
             if self.pen_label.settings.ENABLED:
                 self.pen_label.update_gui(0, color)
             if self.angle_label.settings.ENABLED:
                 self.angle_label.update_gui(hit_angle, color)
             if self.eff_pen_label.settings.ENABLED:
-                self.eff_pen_label.update_gui(int(avg_pen), color)
+                self.eff_pen_label.update_gui(avg_pen, color)
             if self.kill_label.settings.ENABLED and self.kill_label.visible:
                 self.kill_label.hide()
         elif not hit_body:
@@ -83,13 +100,15 @@ class GuiState(object):
             color = Colors.get_color_from_prob(prob)
 
             if self.armor_label.settings.ENABLED:
-                self.armor_label.update_gui(int(armor_value), color)
+                self.armor_label.update_gui(
+                    armor_value, color, armor_format_values
+                )
             if self.pen_label.settings.ENABLED:
                 self.pen_label.update_gui(int(prob), color)
             if self.angle_label.settings.ENABLED:
                 self.angle_label.update_gui(hit_angle, color)
             if self.eff_pen_label.settings.ENABLED:
-                self.eff_pen_label.update_gui(int(avg_pen), color)
+                self.eff_pen_label.update_gui(avg_pen, color)
             if self.kill_label.settings.ENABLED:
                 if kill_prob > 0:
                     self.kill_label.update_gui(
@@ -133,8 +152,17 @@ class Label(object):
             self.visible = False
             self.last_text = None
 
-    def update_gui(self, value, color):
-        interior_text = self.settings.LABEL_FORMAT.format(value=value)
+    def update_gui(self, value, color, format_values=None):
+        values = {"value": value}
+        if format_values:
+            values.update(format_values)
+
+        try:
+            interior_text = self.settings.LABEL_FORMAT.format(**values)
+        except (KeyError, ValueError):
+            # Invalid custom format: keep the GUI usable and fall back to {value}.
+            interior_text = str(value)
+
         new_text = "<font size='{font_size}' color='#{color}' face='$FieldFont'>{interior_text}</font>".format(
             font_size=self.settings.FONT_SIZE, color=color, interior_text=interior_text
         )
@@ -161,11 +189,11 @@ class AngleLabel(Label):
     def __init__(self, alias, settings):
         super(AngleLabel, self).__init__(alias, settings)
 
-    def update_gui(self, value, color):
+    def update_gui(self, value, color, format_values=None):
         if value < self.settings.DISPLAY_THRESHOLD:
             self.hide()
             return
-        super(AngleLabel, self).update_gui(value, color)
+        super(AngleLabel, self).update_gui(value, color, format_values)
 
 
 def _build_glowfilter():
