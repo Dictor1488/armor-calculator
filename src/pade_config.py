@@ -7,7 +7,7 @@ DEFAULT_CONFIG = {
         "x_offset": 0,
         "y_offset": 30,
         "font_size": 20,
-        "label_format": "{value}",
+        "label_format": "{penetration}/{armor}",
     },
     "pen_label": {
         "enabled": True,
@@ -95,6 +95,14 @@ def migrate_label_format_placeholders(user_config):
     return changed
 
 
+def migrate_armor_label_format(user_config):
+    armor_settings = user_config.get("armor_label", {})
+    if armor_settings.get("label_format") == "{value}":
+        armor_settings["label_format"] = "{penetration}/{armor}"
+        return True
+    return False
+
+
 def migrate_config(user_config):
     changed = False
     for section, defaults in DEFAULT_CONFIG.items():
@@ -107,6 +115,8 @@ def migrate_config(user_config):
                     user_config[section][key] = value
                     changed = True
     if migrate_label_format_placeholders(user_config):
+        changed = True
+    if migrate_armor_label_format(user_config):
         changed = True
     if changed:
         with open(CONFIG_PATH, "w") as f:
