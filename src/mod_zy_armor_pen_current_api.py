@@ -1,7 +1,7 @@
 from AvatarInputHandler import gun_marker_ctrl  # type: ignore
 from aih_constants import SHOT_RESULT as _SHOT_RESULT  # type: ignore
 
-from mod_armor_pen_calculator import call_update_gui, log
+from mod_armor_pen_calculator import call_update_gui
 
 
 def my_shot_result_default_current_api(
@@ -165,9 +165,4 @@ def my_shot_result_default_current_api(
 
 gun_marker_ctrl._CrosshairShotResults._CrosshairShotResults__shotResultDefault = (
     classmethod(my_shot_result_default_current_api)
-)
-
-log(
-    "Current WoT penetration API enabled: "
-    "hasPenetrationLoss + piercingPowerLossFactorByDistance"
 )
